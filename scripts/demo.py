@@ -60,7 +60,17 @@ def main() -> None:
     build = os.path.join(REPO, ".claude", "skills", "desk-dashboard", "scripts", "build_dashboard.py")
     subprocess.run([sys.executable, build], cwd=REPO, check=True)
     print("\ndemo runs written to desk/eval/runs/sample-{taker,maker}/ — dashboard/ rebuilt.")
-    print("serving next (make demo) or: python3 -m desk.dashboard_server  →  http://localhost:8788")
+    print(f"serving next (make demo) or: python3 -m desk.dashboard_server  →  {dashboard_url()}")
+
+
+def dashboard_url() -> str:
+    """Where `make demo` / `make run` serve the console — the Makefile's `$${DASH_PORT:-8788}`.
+
+    Same host and port as the Makefile's follow-up echo (`http://127.0.0.1:...`) so the
+    two adjacent lines agree; the variable is read like the Makefile's `:-` default, i.e.
+    unset **or empty** means 8788. `desk.dashboard_server` binds the same variable.
+    """
+    return f"http://127.0.0.1:{os.environ.get('DASH_PORT') or '8788'}"
 
 
 if __name__ == "__main__":
